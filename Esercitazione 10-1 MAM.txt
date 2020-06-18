@@ -1,0 +1,88 @@
+% Giovanni Fracassi
+% Università degli studi Roma Tre
+% Corso di Meccanica Applicata alle Macchine
+% Esercitazione 10 Parte 1
+% Meato a spessore variabile linearmente
+%
+close  all
+clear all
+%
+%  Problema INVERSO
+%
+l = 0.4  % m
+V = 2.4 % m/s
+h1 = 0.40 * 10^(-3)  % m spessore massimo del meato (di ingresso)
+h2 = 0.16*10^(-3)  % m spessore minimo del meato (in uscita)
+mu = 40* 10^(-3) % Pa s  viscosit? alla temperatura di funzionamento
+n = h1/h2; % coefficiente caratteristico del cuscinetto
+%
+%  Deduzione del diagramma dei gradienti
+%
+x = 0:0.01:l;
+zeri = x * 0;
+h= h1 - x * (h1-h2)/(l); 
+pp  =  6 * mu * V *    ( h +  h*n - 2*h2*n  )   ./   (    (1+n)* h.^ 3  );
+%
+%
+p = -6 * l * mu * V * (h2 ^ 2 * n - h2 .* h - h2 .* h * n + h .^ 2) / h2 .^ 2 ./ h .^ 2 / (n ^ 2 - 1);
+%
+%
+%  Valore numerico di N
+%
+N = 0.6e1 * l ^ 2 / (h2 * n - h2) * mu * V * (-(2 * n) + 0.2e1 + log(n) + n * log(n)) / h2 / (n ^ 2 - 1)
+%
+%
+%  Valore numerico di xN
+%
+%
+xN = l / (h2 * n - h2) / (-(2 * n) + 0.2e1 + log(n) + n * log(n)) * h2 * (-(5 * n ^ 2) + (4 * n) + 0.1e1 + 0.2e1 * (n ^ 2) * log(n) + 0.4e1 * n * log(n)) / 0.2e1
+%
+%
+%  Valore del coefficiente di attrito mediato
+%
+fm = 0.1e1 / l * (-(3 * n) + 0.2e1 * n * log(n) + 0.2e1 * log(n) + 0.3e1) * (h2 * n - h2) / (-(2 * n) + 0.2e1 + log(n) + n * log(n)) / 0.3e1
+%
+%  diagramma delle velocità u delle falde fluide parallele
+%
+ xd = 0.15;
+ hxd = h1 - xd * (h1-h2)/(l); 
+ accur = 50;
+ deltaz = h2/accur;
+ z = 0:deltaz:hxd;
+ u = -V * z .* (2 * hxd^ 2 + 2 * hxd ^ 2 * n - 3 * hxd * z - 3 * hxd * n * z - 6 * h2 * hxd * n + 6 * h2 * n * z) / (1 + n) / hxd^ 3;
+%
+%
+scala_pp = 1;
+scala_p = 15;
+figure(1)
+set(1,'Color','w');
+plot(x,zeri,'-k');
+hold on;
+plot(x, pp *scala_pp,'-r','LineWidth',1);
+hold on
+plot(x,p*scala_p,'-g','LineWidth',1);
+%hold on
+% plot(ep,k*scala_k,'-.b','LineWidth',1);
+%
+title(' Gradiente e Pressione ');
+ylabel('  rosso gradiente, verde pressione ');
+xlabel('  asse x  ');
+% legend ('ascisse','gradienti','pressioni', 'location','outside');
+% grid 'minor' on;
+hold off
+figure(2)
+set(2,'Color','w');
+plot(u,z,'-r');
+hold on
+title('Diagramma delle velocità (u(0.12)= rosso; u(0.227)= blu; u(0.34)= verde)')
+xd = 0.227;
+hxd = h1 - xd * (h1-h2)/(l); 
+z = 0:deltaz:hxd;
+u = -V * z .* (2 * hxd^ 2 + 2 * hxd ^ 2 * n - 3 * hxd * z - 3 * hxd * n * z - 6 * h2 * hxd * n + 6 * h2 * n * z) / (1 + n) / hxd^ 3;
+plot(u,z,'-b');
+hold on
+xd = 0.34;
+hxd = h1 - xd * (h1-h2)/(l); 
+z = 0:deltaz:hxd;
+u = -V * z .* (2 * hxd^ 2 + 2 * hxd ^ 2 * n - 3 * hxd * z - 3 * hxd * n * z - 6 * h2 * hxd * n + 6 * h2 * n * z) / (1 + n) / hxd^ 3;
+plot(u,z,'-g');
